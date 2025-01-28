@@ -1,0 +1,18 @@
+{
+  "IN": { "name": "India", "adjacent": ["PK", "CN", "BD", "NP"] },
+  "US": { "name": "United States", "adjacent": ["CA", "MX"] },
+  "AUS": { "name": "Australia", "adjacent": [] },
+  "PK": { "name": "Pakistan", "adjacent": ["IN", "AF"] },
+  "CN": { "name": "China", "adjacent": ["IN", "RU", "KP"] },
+  "BD": { "name": "Bangladesh", "adjacent": ["IN", "MM"] },
+  "NP": { "name": "Nepal", "adjacent": ["IN", "CN"] },
+  "MX": { "name": "Mexico", "adjacent": ["US"] },
+  "CA": { "name": "Canada", "adjacent": ["US"] },
+  "RU": { "name": "Russia", "adjacent": ["CN", "FI"] },
+  "AF": { "name": "Afghanistan", "adjacent": ["PK", "IR"] },
+  "KP": { "name": "North Korea", "adjacent": ["CN", "KR"] },
+  "KR": { "name": "South Korea", "adjacent": ["KP"] },
+  "FI": { "name": "Finland", "adjacent": ["RU", "SE"] },
+  "SE": { "name": "Sweden", "adjacent": ["FI", "NO"] },
+  "NO": { "name": "Norway", "adjacent": ["SE"] }
+}
