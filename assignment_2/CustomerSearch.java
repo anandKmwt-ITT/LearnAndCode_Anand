@@ -45,14 +45,14 @@ public class CustomerSearch {
         return result;
     }
 
-    // Export customer data to CSV
-    public String exportToCSV(List<Customer> data) {
-        StringJoiner sj = new StringJoiner("\n");
+}
 
-        for (Customer item : data) {
-            sj.add(String.format("%d,%s,%s,%s", item.getCustomerID(), item.getCompanyName(), item.getContactName(), item.getCountry()));
-        }
+public interface Exporter{
+    Report export(List<Customer> list);
+}
 
-        return sj.toString();
+public class CSVExporter implements Exporter{
+    Report export(List<Customer> list){
+
     }
 }
