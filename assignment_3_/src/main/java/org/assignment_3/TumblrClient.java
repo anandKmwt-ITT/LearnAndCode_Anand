@@ -7,15 +7,18 @@ import java.util.Scanner;
 import org.json.*;
 
 public class TumblrClient {
+    private static final String TUMBLR_API_URL = "https://%s.tumblr.com/api/read/json?type=photo&num=%d&start=%d";
+
     public static void main(String[] args) {
         try {
-            processUserInput();
+            String[] userInputs = processUserInput();
+            fetchAndDisplayTumblrData(userInputs[0], Integer.parseInt(userInputs[1]), Integer.parseInt(userInputs[2]));
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static void processUserInput() throws IOException, JSONException {
+    private static String[] processUserInput() throws IOException, JSONException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Tumblr blog name: ");
@@ -35,11 +38,11 @@ public class TumblrClient {
             throw new IllegalArgumentException("Invalid range values! Ensure 'start' is positive and 'end' is greater than 'start'.");
         }
 
-        fetchAndDisplayTumblrData(blogName, startingBlog, numberOfBlogs);
+        return new String[]{blogName, String.valueOf(startingBlog), String.valueOf(numberOfBlogs)};
     }
 
     private static void fetchAndDisplayTumblrData(String blogName, int start, int num) throws IOException, JSONException {
-        String url = "https://" + blogName + ".tumblr.com/api/read/json?type=photo&num=" + num + "&start=" + (start - 1);
+        String url = String.format(TUMBLR_API_URL, blogName, num, start - 1);
         String jsonResponse = fetchAPIResponse(url);
         displayBlogInfo(jsonResponse, start);
     }
@@ -62,10 +65,8 @@ public class TumblrClient {
     }
 
     private static String cleanJsonResponse(String response) {
-        if (response.startsWith("var tumblr_api_read =")) {
-            return response.substring(21).trim();
-        }
-        return response;
+        int startIndex = response.indexOf('{');
+        return (startIndex != -1) ? response.substring(startIndex) : response;
     }
 
     private static void displayBlogInfo(String jsonResponse, int start) throws JSONException {
