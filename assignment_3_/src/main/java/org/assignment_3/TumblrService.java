@@ -7,13 +7,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class TumblrService {
-    private static final String API_URL = "https://%s.tumblr.com/api/read/json?type=photo&num=%d&start=%d";
+    private static final String API_URL = ConfigLoader.getProperty("api.url");
+    private static final String USER_AGENT = ConfigLoader.getProperty("user.agent");
 
     public String fetchBlogData(String blogName, int start, int num) throws IOException {
         String url = String.format(API_URL, blogName, num, start - 1);
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         StringBuilder response = new StringBuilder();
