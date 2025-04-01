@@ -1,24 +1,28 @@
 package org.assignment_3;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.util.Scanner;
-import org.json.*;
 
 public class TumblrClient {
-    private static final String TUMBLR_API_URL = "https://%s.tumblr.com/api/read/json?type=photo&num=%d&start=%d";
+    private final TumblrService tumblrService;
+    private final TumblrParser tumblrParser;
 
-    public static void main(String[] args) {
+    public TumblrClient(TumblrService tumblrService, TumblrParser tumblrParser) {
+        this.tumblrService = tumblrService;
+        this.tumblrParser = tumblrParser;
+    }
+
+    public void startApplication() {
         try {
             String[] userInputs = processUserInput();
-            fetchAndDisplayTumblrData(userInputs[0], Integer.parseInt(userInputs[1]), Integer.parseInt(userInputs[2]));
+            String jsonResponse = tumblrService.fetchBlogData(userInputs[0], Integer.parseInt(userInputs[1]), Integer.parseInt(userInputs[2]));
+            tumblrParser.displayBlogInfo(jsonResponse, Integer.parseInt(userInputs[1]));
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static String[] processUserInput() throws IOException, JSONException {
+    private String[] processUserInput() throws IOException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Tumblr blog name: ");
@@ -41,48 +45,10 @@ public class TumblrClient {
         return new String[]{blogName, String.valueOf(startingBlog), String.valueOf(numberOfBlogs)};
     }
 
-    private static void fetchAndDisplayTumblrData(String blogName, int start, int num) throws IOException, JSONException {
-        String url = String.format(TUMBLR_API_URL, blogName, num, start - 1);
-        String jsonResponse = fetchAPIResponse(url);
-        displayBlogInfo(jsonResponse, start);
-    }
-
-    private static String fetchAPIResponse(String apiUrl) throws IOException {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(apiUrl).openConnection();
-        httpURLConnection.setRequestMethod("GET");
-        httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-        StringBuilder response = new StringBuilder();
-        String inputLine;
-
-        while ((inputLine = bufferedReader.readLine()) != null) {
-            response.append(inputLine);
-        }
-
-        bufferedReader.close();
-        return cleanJsonResponse(response.toString());
-    }
-
-    private static String cleanJsonResponse(String response) {
-        int startIndex = response.indexOf('{');
-        return (startIndex != -1) ? response.substring(startIndex) : response;
-    }
-
-    private static void displayBlogInfo(String jsonResponse, int start) throws JSONException {
-        JSONObject jsonObject = new JSONObject(jsonResponse);
-        JSONObject blog = jsonObject.getJSONObject("tumblelog");
-
-        System.out.println("\nTitle: " + blog.optString("title", "N/A"));
-        System.out.println("Name: " + blog.optString("name", "N/A"));
-        System.out.println("Description: " + blog.optString("description", "N/A"));
-        System.out.println("Total Posts: " + jsonObject.optInt("posts-total", 0));
-        System.out.println("\nImages:");
-
-        JSONArray posts = jsonObject.getJSONArray("posts");
-        for (int count = 0; count < posts.length(); count++) {
-            JSONObject post = posts.getJSONObject(count);
-            System.out.println((start + count) + ". " + post.optString("photo-url-1280", "No Image Available"));
-        }
+    public static void main(String[] args) {
+        TumblrService tumblrService = new TumblrService();
+        TumblrParser tumblrParser = new TumblrParser();
+        TumblrClient client = new TumblrClient(tumblrService, tumblrParser);
+        client.startApplication();
     }
 }
