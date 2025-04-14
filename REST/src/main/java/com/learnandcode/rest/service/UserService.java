@@ -1,15 +1,14 @@
-package com.learnAndCode.REST.Service;
+package com.learnandcode.rest.service;
 
-import com.learnAndCode.REST.Dto.UserDTO;
-import com.learnAndCode.REST.Model.User;
+import com.learnandcode.rest.dto.UserDTO;
+import com.learnandcode.rest.model.User;
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
     List<User> getAllUsers();
 
-    Optional<User> getUserById(Long id);
+    User getUserById(Long id);
 
     User createUser(UserDTO dto);
 

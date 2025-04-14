@@ -1,4 +1,4 @@
-package com.learnAndCode.REST.Model;
+package com.learnandcode.rest.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

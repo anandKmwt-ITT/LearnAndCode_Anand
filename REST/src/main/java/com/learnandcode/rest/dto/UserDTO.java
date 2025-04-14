@@ -1,4 +1,4 @@
-package com.learnAndCode.REST.Dto;
+package com.learnandcode.rest.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;

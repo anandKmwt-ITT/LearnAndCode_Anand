@@ -8,10 +8,10 @@
 		<version>3.3.10</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.learnAndCode</groupId>
-	<artifactId>REST</artifactId>
+	<groupId>com.learnandcode</groupId>
+	<artifactId>rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>REST</name>
+	<name>rest</name>
 	<description>REST apis assignment</description>
 	<url/>
 	<licenses>
