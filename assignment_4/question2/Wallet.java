@@ -1,21 +1,25 @@
 package question2;
 
 public class Wallet {
-    private float value;
+    private float amount;
+
+    public Wallet(float initialAmount) {
+        this.amount = initialAmount;
+    }
 
     public float getTotalMoney() {
-        return value;
+        return amount;
     }
 
-    public void setTotalMoney(float newValue) {
-        value = newValue;
+    public void setTotalMoney(float amount) {
+        this.amount = amount;
     }
 
-    public void addMoney(float deposit) {
-        value += deposit;
+    public void addMoney(float amount) {
+        this.amount += amount;
     }
 
-    public void subtractMoney(float debit) {
-        value -= debit;
+    public void subtractMoney(float amount) {
+        this.amount -= amount ;
     }
 }

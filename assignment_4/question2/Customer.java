@@ -5,10 +5,10 @@ public class Customer {
     private String lastName;
     private Wallet myWallet;
 
-    public Customer(String firstName, String lastName) {
+    public Customer(String firstName, String lastName, float initialBalance) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.myWallet = new Wallet();
+        this.myWallet = new Wallet(initialBalance);
     }
 
     public String getFirstName() {
@@ -23,10 +23,6 @@ public class Customer {
         return myWallet.getTotalMoney();
     }
 
-    public boolean hasEnoughMoney(float amount) {
-        return myWallet.getTotalMoney() >= amount;
-    }
-
     public boolean pay(float amount) {
         if (hasEnoughMoney(amount)) {
             myWallet.subtractMoney(amount);
@@ -37,5 +33,9 @@ public class Customer {
 
     public void addMoney(float amount) {
         myWallet.addMoney(amount);
+    }
+
+    private boolean hasEnoughMoney(float amount) {
+        return myWallet.getTotalMoney() >= amount;
     }
 }
