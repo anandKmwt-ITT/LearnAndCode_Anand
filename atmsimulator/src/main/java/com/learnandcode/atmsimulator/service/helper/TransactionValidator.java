@@ -4,6 +4,7 @@ import com.learnandcode.atmsimulator.exception.DailyLimitExceededException;
 import com.learnandcode.atmsimulator.exception.InsufficientFundsException;
 import com.learnandcode.atmsimulator.model.ATM;
 import com.learnandcode.atmsimulator.model.UserAccount;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -11,7 +12,8 @@ import java.time.LocalDate;
 @Component
 public class TransactionValidator {
 
-    private final double DAILY_LIMIT = 25000;
+    @Value("${daily.limit}")
+    private double dailyLimit;
 
     public void validateWithdrawal(UserAccount user, ATM atm, double amount) {
         if (amount > user.getBalance()) {
@@ -28,7 +30,7 @@ public class TransactionValidator {
             user.setLastWithdrawDate(today);
         }
 
-        if (user.getDailyWithdrawn() + amount > DAILY_LIMIT) {
+        if (user.getDailyWithdrawn() + amount > dailyLimit) {
             throw new DailyLimitExceededException("Daily withdrawal limit exceeded");
         }
     }

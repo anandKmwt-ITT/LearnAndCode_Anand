@@ -1,6 +1,7 @@
 package com.learnandcode.atmsimulator.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
 
 import java.time.LocalDate;

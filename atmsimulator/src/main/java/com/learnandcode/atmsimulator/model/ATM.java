@@ -9,6 +9,6 @@ import lombok.Data;
 public class ATM {
 
     @Id
-    private int id = 1; // Singleton row
+    private int id = 1;
     private double availableCash;
 }

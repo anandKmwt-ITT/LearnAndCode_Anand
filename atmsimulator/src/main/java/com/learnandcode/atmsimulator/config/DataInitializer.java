@@ -19,11 +19,11 @@ public class DataInitializer {
 
     @PostConstruct
     public void init() {
-        initDefaultUser();
+        initDefaultUserAccount();
         initATM();
     }
 
-    private void initDefaultUser() {
+    private void initDefaultUserAccount() {
         String defaultCardNumber = "1234567890123456";
         if (userRepository.findById(defaultCardNumber).isEmpty()) {
             UserAccount user = new UserAccount();
@@ -33,9 +33,8 @@ public class DataInitializer {
             user.setBlocked(false);
             user.setInvalidPinAttempts(0);
             user.setDailyWithdrawn(0);
-            user.setLastWithdrawDate(LocalDate.now().minusDays(1)); // Resets daily limit
+            user.setLastWithdrawDate(LocalDate.now().minusDays(1));
             userRepository.save(user);
-            System.out.println("✅ Default user created");
         }
     }
 
@@ -45,7 +44,6 @@ public class DataInitializer {
             atm.setId(1);
             atm.setAvailableCash(100000);
             atmRepository.save(atm);
-            System.out.println("✅ ATM initialized with ₹100000");
         }
     }
 }
