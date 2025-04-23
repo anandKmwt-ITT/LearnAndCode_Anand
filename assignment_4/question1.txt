@@ -1,0 +1,4 @@
+"employee" is an object as it is an instance of a class that combines both data
+(properties like name, age, and salary) and behavior (methods like getName() and setName()).
+Also it implements encapsulation by restricting direct access to its internal data and
+instead providing controlled access through its defined public methods.

@@ -1,0 +1,59 @@
+# --------------------------------
+# IntelliJ IDEA
+# --------------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IntelliJ modules in sub-projects
+**/.idea/
+**/*.iml
+
+# --------------------------------
+# Build output
+# --------------------------------
+/out/
+**/out/
+/target/                # Maven
+**/target/
+/build/                 # Gradle
+**/build/
+
+# --------------------------------
+# Logs and temporary files
+# --------------------------------
+*.log
+*.tmp
+*.swp
+*.bak
+
+# --------------------------------
+# OS generated files
+# --------------------------------
+.DS_Store               # macOS
+Thumbs.db               # Windows
+ehthumbs.db             # Windows
+Desktop.ini             # Windows
+
+# --------------------------------
+# Environment & tool files
+# --------------------------------
+.env
+*.class
+*.jar
+*.war
+*.ear
+
+# --------------------------------
+# VSCode (if ever used)
+# --------------------------------
+.vscode/
+
+# --------------------------------
+# User-specific files
+# --------------------------------
+/shelf/
+/workspace.xml
+**/shelf/
+/**/workspace.xml
