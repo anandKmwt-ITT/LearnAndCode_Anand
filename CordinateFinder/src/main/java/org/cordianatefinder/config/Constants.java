@@ -8,4 +8,6 @@ public class Constants {
     public static final String LONGITUDE_LABEL = "Longitude: ";
     public static final String NO_RESULT_FOUND = "No results found for: ";
     public static final String ERROR_FETCHING_COORDINATES = "Error occurred while fetching coordinates: ";
+    public static final int CONNECTION_TIMEOUT = 5000;
+    public static final int READ_TIMEOUT = 5000;
 }
