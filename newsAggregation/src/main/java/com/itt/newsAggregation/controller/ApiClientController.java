@@ -1,6 +1,7 @@
 package com.itt.newsAggregation.controller;
 
 import com.itt.newsAggregation.dto.ApiClientDto;
+import com.itt.newsAggregation.dto.ApiClientResponseDto;
 import com.itt.newsAggregation.service.ApiClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,20 +19,20 @@ public class ApiClientController {
 
 
     @PostMapping
-    public ResponseEntity<ApiClientDto> registerClient(@RequestBody ApiClientDto dto) {
-        ApiClientDto saved = apiClientService.registerApiClient(dto);
+    public ResponseEntity<ApiClientResponseDto> registerClient(@RequestBody ApiClientDto dto) {
+        ApiClientResponseDto saved = apiClientService.registerApiClient(dto);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiClientDto> getById(@PathVariable Integer id) {
-        ApiClientDto dto = apiClientService.getApiClientById(id);
+    public ResponseEntity<ApiClientResponseDto> getById(@PathVariable Integer id) {
+        ApiClientResponseDto dto = apiClientService.getApiClientById(id);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiClientDto> updateClient(@PathVariable Integer id, @RequestBody ApiClientDto dto) {
-        ApiClientDto updated = apiClientService.updateApiClient(id, dto);
+    public ResponseEntity<ApiClientResponseDto> updateClient(@PathVariable Integer id, @RequestBody ApiClientDto dto) {
+        ApiClientResponseDto updated = apiClientService.updateApiClient(id, dto);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
@@ -42,8 +43,8 @@ public class ApiClientController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ApiClientDto>> getAllClients() {
-        List<ApiClientDto> allClients = apiClientService.getAllClients();
+    public ResponseEntity<List<ApiClientResponseDto>> getAllClients() {
+        List<ApiClientResponseDto> allClients = apiClientService.getAllClients();
         if (allClients.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

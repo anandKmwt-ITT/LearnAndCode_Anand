@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.service.impl;
 
-import com.itt.newsAggregation.repositoy.UserRepository;
+import com.itt.newsAggregation.repository.UserRepository;
 import com.itt.newsAggregation.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

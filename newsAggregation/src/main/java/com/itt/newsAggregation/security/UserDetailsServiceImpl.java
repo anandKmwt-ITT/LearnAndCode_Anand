@@ -1,7 +1,7 @@
 package com.itt.newsAggregation.security;
 
 import com.itt.newsAggregation.model.User;
-import com.itt.newsAggregation.repositoy.UserRepository;
+import com.itt.newsAggregation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

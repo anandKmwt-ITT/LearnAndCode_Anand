@@ -14,5 +14,6 @@ public class ArticleDto {
     private String content;
     private String source;
     private String url;
+    private String category;
     private LocalDateTime publishedAt;
 }

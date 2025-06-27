@@ -22,4 +22,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Article> article;
+
+    @OneToMany(mappedBy = "category")
+    private List<Keyword> keywords;
 }

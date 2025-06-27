@@ -1,7 +1,8 @@
 package com.itt.newsAggregation.service;
 
-import com.itt.newsAggregation.dto.UserDto;
+import com.itt.newsAggregation.dto.UserRequestDto;
+import com.itt.newsAggregation.dto.UserResponseDto;
 
 public interface UserService {
-  UserDto registerUser(UserDto userDto);
+  UserResponseDto registerUser(UserRequestDto userDto);
 }

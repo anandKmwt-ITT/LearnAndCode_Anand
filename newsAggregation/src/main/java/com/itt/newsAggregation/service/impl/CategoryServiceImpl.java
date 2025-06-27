@@ -2,7 +2,7 @@ package com.itt.newsAggregation.service.impl;
 
 import com.itt.newsAggregation.dto.CategoryDto;
 import com.itt.newsAggregation.model.Category;
-import com.itt.newsAggregation.repositoy.CategoryRepository;
+import com.itt.newsAggregation.repository.CategoryRepository;
 import com.itt.newsAggregation.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

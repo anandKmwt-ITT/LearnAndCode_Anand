@@ -4,16 +4,15 @@ import com.itt.newsAggregation.dto.NotificationPreferenceDto;
 import com.itt.newsAggregation.model.Category;
 import com.itt.newsAggregation.model.NotificationPreference;
 import com.itt.newsAggregation.model.User;
-import com.itt.newsAggregation.repositoy.CategoryRepository;
-import com.itt.newsAggregation.repositoy.NotificationPreferenceRepository;
-import com.itt.newsAggregation.repositoy.UserRepository;
+import com.itt.newsAggregation.repository.CategoryRepository;
+import com.itt.newsAggregation.repository.NotificationPreferenceRepository;
+import com.itt.newsAggregation.repository.UserRepository;
 import com.itt.newsAggregation.service.NotificationPreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 public class NotificationPreferenceImpl implements NotificationPreferenceService {
@@ -28,18 +27,18 @@ public class NotificationPreferenceImpl implements NotificationPreferenceService
     private CategoryRepository categoryRepository;
 
     @Override
-    public boolean saveNotificationPreference(String username, String category, boolean isEnabled) {
-        Optional<User> byUsername = userRepository.findByUsername(username);
-        Optional<Category> byCategory = categoryRepository.findByName(category);
+    public NotificationPreferenceDto saveNotificationPreference(NotificationPreferenceDto notificationPreferenceDto) {
+        Optional<User> byUsername = userRepository.findByUsername(notificationPreferenceDto.getUsername());
+        Optional<Category> byCategory = categoryRepository.findByName(notificationPreferenceDto.getCategory());
         NotificationPreference notificationPreference = new NotificationPreference();
         if (byUsername.isPresent() && byCategory.isPresent()) {
             notificationPreference.setUser(byUsername.get());
             notificationPreference.setCategory(byCategory.get());
-            notificationPreference.setEnabled(isEnabled);
-            notificationPreferenceRepository.save(notificationPreference);
-            return true;
+            notificationPreference.setEnabled(notificationPreferenceDto.getIsEnabled());
+            NotificationPreference savedNotification = notificationPreferenceRepository.save(notificationPreference);
+            return mapToDto(savedNotification);
         }
-        return false;
+        return  null;
     }
 
     @Override
@@ -66,19 +65,27 @@ public class NotificationPreferenceImpl implements NotificationPreferenceService
     }
 
     @Override
-    public boolean updateNotificationPreference(String username, String category, boolean isEnabled) {
-        Optional<User> byUsername = userRepository.findByUsername(username);
-        Optional<Category> byCategory = categoryRepository.findByName(category);
+    public NotificationPreferenceDto updateNotificationPreference(NotificationPreferenceDto notificationPreferenceDto) {
+        Optional<User> byUsername = userRepository.findByUsername(notificationPreferenceDto.getUsername());
+        Optional<Category> byCategory = categoryRepository.findByName(notificationPreferenceDto.getCategory());
         if (byUsername.isPresent() && byCategory.isPresent()) {
             NotificationPreference notificationPreference = notificationPreferenceRepository
                     .findByUserAndCategory(byUsername.get(), byCategory.get());
             if (notificationPreference != null) {
-                notificationPreference.setEnabled(isEnabled);
+                notificationPreference.setEnabled(notificationPreferenceDto.getIsEnabled());
                 notificationPreferenceRepository.save(notificationPreference);
-                return true;
+                return mapToDto(notificationPreference);
             }
         }
-        return false;
+        return null;
+    }
+
+    private NotificationPreferenceDto mapToDto(NotificationPreference notificationPreference) {
+        return NotificationPreferenceDto.builder()
+                .username(notificationPreference.getUser().getUsername())
+                .category(notificationPreference.getCategory().getName())
+                .isEnabled(notificationPreference.getEnabled())
+                .build();
     }
 
 }

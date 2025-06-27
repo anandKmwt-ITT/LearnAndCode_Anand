@@ -3,8 +3,8 @@ package com.itt.newsAggregation.service.impl;
 import com.itt.newsAggregation.exception.UserNotFoundException;
 import com.itt.newsAggregation.model.Notification;
 import com.itt.newsAggregation.model.User;
-import com.itt.newsAggregation.repositoy.NotificationRepository;
-import com.itt.newsAggregation.repositoy.UserRepository;
+import com.itt.newsAggregation.repository.NotificationRepository;
+import com.itt.newsAggregation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

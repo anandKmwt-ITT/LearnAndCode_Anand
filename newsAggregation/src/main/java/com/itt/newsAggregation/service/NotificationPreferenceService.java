@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface NotificationPreferenceService {
 
-    boolean saveNotificationPreference(String username, String category, boolean isEnabled);
+    NotificationPreferenceDto saveNotificationPreference(NotificationPreferenceDto notificationPreferenceDto);
     List<NotificationPreferenceDto> getAllNotificationPreferences(String username);
-    boolean updateNotificationPreference(String username, String category, boolean isEnabled);
+    NotificationPreferenceDto updateNotificationPreference(NotificationPreferenceDto notificationPreferenceDto);
     List<NotificationPreferenceDto> getAllNotificationPreferences();
 }

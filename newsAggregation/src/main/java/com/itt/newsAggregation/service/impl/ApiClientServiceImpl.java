@@ -1,9 +1,10 @@
 package com.itt.newsAggregation.service.impl;
 
 import com.itt.newsAggregation.dto.ApiClientDto;
+import com.itt.newsAggregation.dto.ApiClientResponseDto;
 import com.itt.newsAggregation.exception.ResourceNotFoundException;
 import com.itt.newsAggregation.model.ApiClient;
-import com.itt.newsAggregation.repositoy.ApiClientRepository;
+import com.itt.newsAggregation.repository.ApiClientRepository;
 import com.itt.newsAggregation.service.ApiClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,14 @@ public class ApiClientServiceImpl implements ApiClientService {
     private ApiClientRepository apiClientRepository;
 
     @Override
-    public ApiClientDto registerApiClient(ApiClientDto dto) {
+    public ApiClientResponseDto registerApiClient(ApiClientDto dto) {
         ApiClient apiClient = mapToEntity.apply(dto);
         ApiClient saved = apiClientRepository.save(apiClient);
         return mapToDto(saved);
     }
 
     @Override
-    public ApiClientDto getApiClientById(Integer id) {
+    public ApiClientResponseDto getApiClientById(Integer id) {
         ApiClient apiClient = apiClientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("API client not found with ID: " + id));
 
@@ -38,7 +39,7 @@ public class ApiClientServiceImpl implements ApiClientService {
     }
 
     @Override
-    public ApiClientDto updateApiClient(Integer id, ApiClientDto dto) {
+    public ApiClientResponseDto updateApiClient(Integer id, ApiClientDto dto) {
         ApiClient existing = apiClientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("API client not found with ID: " + id));
 
@@ -66,21 +67,23 @@ public class ApiClientServiceImpl implements ApiClientService {
     }
 
     @Override
-    public List<ApiClientDto> getAllClients() {
+    public List<ApiClientResponseDto> getAllClients() {
         List<ApiClient> apiClients = apiClientRepository.findAll();
-        List<ApiClientDto> apiClientDtos = apiClients.stream()
+        List<ApiClientResponseDto> apiClientDtos = apiClients.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
         return apiClientDtos;
     }
 
 
-    private ApiClientDto mapToDto(ApiClient apiClient) {
-        return ApiClientDto.builder()
+    private ApiClientResponseDto mapToDto(ApiClient apiClient) {
+        return ApiClientResponseDto.builder()
+                .id(apiClient.getId())
                 .name(apiClient.getName())
                 .url(apiClient.getUrl())
                 .apiKey(apiClient.getApiKey())
                 .status(apiClient.getStatus().name())
+                .lastAccessed(apiClient.getLastAccessed().toString())
                 .build();
     }
 

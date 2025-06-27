@@ -1,6 +1,7 @@
 package com.itt.newsAggregation.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class User {
     @Column(length = 50, nullable = false, unique = true)
     private String username;
 
+    @Email
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 

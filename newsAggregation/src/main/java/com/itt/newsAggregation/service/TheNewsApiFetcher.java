@@ -42,7 +42,7 @@ public class TheNewsApiFetcher implements NewsFetcher {
             try {
                 publishedAt = LocalDateTime.parse(obj.optString("published_at", ""), formatter);
             } catch (Exception e) {
-                publishedAt = LocalDateTime.now(); // fallback if parsing fails
+                publishedAt = LocalDateTime.now();
             }
 
             list.add(ArticleDto.builder()

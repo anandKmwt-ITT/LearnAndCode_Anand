@@ -1,5 +1,6 @@
 package com.itt.newsAggregation.dto;
 
+import com.itt.newsAggregation.model.UserReaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class  ApiClientDto {
-    private String name;
-    private String url;
-    private String apiKey;
-    private String status;
+public class UserReactionDto {
+    private Integer userId;
+    private Integer articleId;
+    private UserReaction.ReactionType reaction;
 }

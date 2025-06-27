@@ -1,4 +1,4 @@
-package com.itt.newsAggregation.repositoy;
+package com.itt.newsAggregation.repository;
 
 import com.itt.newsAggregation.model.SavedArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +11,5 @@ public interface SavedArticleRepository extends JpaRepository<SavedArticle, Inte
     boolean existsByUserIdAndArticleId(Integer userId, Integer articleId);
     void deleteByUserIdAndArticleId(Integer userId, Integer articleId);
     List<SavedArticle> findByUserId(Integer userId);
+    List<SavedArticle> findByUserUsername(String username);
 }

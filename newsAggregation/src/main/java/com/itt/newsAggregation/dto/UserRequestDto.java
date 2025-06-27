@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class  ApiClientDto {
-    private String name;
-    private String url;
-    private String apiKey;
-    private String status;
+public class UserRequestDto {
+    private String username;
+    private String email;
+    private String password;
 }

@@ -1,6 +1,7 @@
 package com.itt.newsAggregation.controller;
 
 import com.itt.newsAggregation.dto.ArticleDto;
+import com.itt.newsAggregation.dto.NewsHeadlineResponseDto;
 import com.itt.newsAggregation.dto.SavedArticleDto;
 import com.itt.newsAggregation.service.ArticleService;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -24,15 +25,34 @@ public class ArticleController {
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleDto> getArticleById(@PathVariable Integer id) {
+        ArticleDto article = articleService.getArticleById(id);
+        return new ResponseEntity<>(article, HttpStatus.OK);
+    }
+
+    @GetMapping("/headlines")
+    public ResponseEntity<List<NewsHeadlineResponseDto>> getAllHeadlines() {
+        List<NewsHeadlineResponseDto> headlines = articleService.getAllHeadlines();
+        return new ResponseEntity<>(headlines, HttpStatus.OK);
+    }
+
     @PostMapping("/save/{userId}/{articleId}")
     public ResponseEntity<SavedArticleDto> saveArticle(@PathVariable Integer userId, @PathVariable Integer articleId){
         SavedArticleDto savedArticleDto = articleService.saveArticle(userId, articleId);
         return new ResponseEntity<>(savedArticleDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/saved/{userId}")
-    public ResponseEntity<List<SavedArticleDto>> getSavedArticles(@PathVariable Integer userId) {
-        List<SavedArticleDto> savedArticles = articleService.getSavedArticles(userId);
+    @GetMapping("/saved/{username}")
+    public ResponseEntity<List<SavedArticleDto>> getSavedArticles(@PathVariable String username) {
+        List<SavedArticleDto> savedArticles = articleService.getSavedArticles(username);
         return new ResponseEntity<>(savedArticles, HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticleDto>> searchArticles(@RequestParam("keyword") String keyword) {
+        List<ArticleDto> result = articleService.searchArticles(keyword);
+        return ResponseEntity.ok(result);
+    }
+
 }

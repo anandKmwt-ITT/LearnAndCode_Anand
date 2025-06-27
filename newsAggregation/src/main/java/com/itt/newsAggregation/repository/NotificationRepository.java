@@ -1,4 +1,4 @@
-package com.itt.newsAggregation.repositoy;
+package com.itt.newsAggregation.repository;
 
 import com.itt.newsAggregation.model.Notification;
 import com.itt.newsAggregation.model.User;

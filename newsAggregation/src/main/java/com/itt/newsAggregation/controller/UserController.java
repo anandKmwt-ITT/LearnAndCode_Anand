@@ -1,7 +1,9 @@
 package com.itt.newsAggregation.controller;
 
-import com.itt.newsAggregation.dto.UserDto;
+import com.itt.newsAggregation.dto.UserRequestDto;
+import com.itt.newsAggregation.dto.UserResponseDto;
 import com.itt.newsAggregation.response.ApiResponse;
+import com.itt.newsAggregation.response.AuthResponse;
 import com.itt.newsAggregation.service.AuthenticationService;
 import com.itt.newsAggregation.security.UserDetailsServiceImpl;
 import com.itt.newsAggregation.service.UserService;
@@ -42,9 +44,9 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     @PostMapping("register")
-    public ResponseEntity<?> createUser(@RequestBody UserDto userDto){
-        UserDto savedUser = userService.registerUser(userDto);
-        ApiResponse<UserDto> response = ApiResponse.<UserDto>builder()
+    public ResponseEntity<?> createUser(@RequestBody UserRequestDto userDto){
+        UserResponseDto savedUser = userService.registerUser(userDto);
+        ApiResponse<UserResponseDto> response = ApiResponse.<UserResponseDto>builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.CREATED.value())
                 .message("User registered successfully")
@@ -54,13 +56,17 @@ public class UserController {
     }
 
     @PostMapping("authenticate")
-    public ResponseEntity<?> authenticateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> authenticateUser(@RequestBody UserRequestDto userDto) {
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
-            return new ResponseEntity<>(jwt, HttpStatus.OK);
+            AuthResponse authResponse = AuthResponse.builder()
+                    .token(jwt)
+                    .role(userDetails.getAuthorities().stream().toList().get(0).getAuthority())
+                    .build();
+            return new ResponseEntity<>(authResponse, HttpStatus.OK);
         }catch (AuthenticationException exception){
             log.error("Exception occurred while createAuthenticationToken ", exception);
             return new ResponseEntity<>("Incorrect username or password", HttpStatus.BAD_REQUEST);
