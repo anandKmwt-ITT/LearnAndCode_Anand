@@ -1,7 +1,7 @@
 package com.itt.newsAggregation.service;
 
-import com.itt.newsAggregation.dto.ApiClientDto;
-import com.itt.newsAggregation.dto.ApiClientResponseDto;
+import com.itt.newsAggregation.dto.common.ApiClientDto;
+import com.itt.newsAggregation.dto.response.ApiClientResponseDto;
 
 import java.util.List;
 

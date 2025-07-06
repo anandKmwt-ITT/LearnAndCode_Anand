@@ -1,27 +1,26 @@
 package com.itt.newsAggregation.service.impl;
 
-import com.itt.newsAggregation.dto.*;
+import com.itt.newsAggregation.dto.common.ArticleDto;
+import com.itt.newsAggregation.dto.common.SavedArticleDto;
+import com.itt.newsAggregation.dto.common.UserReactionDto;
+import com.itt.newsAggregation.dto.request.CategoryRequestDto;
+import com.itt.newsAggregation.dto.response.NewsHeadlineResponseDto;
 import com.itt.newsAggregation.exception.ResourceNotFoundException;
-import com.itt.newsAggregation.model.Article;
-import com.itt.newsAggregation.model.Category;
-import com.itt.newsAggregation.model.SavedArticle;
-import com.itt.newsAggregation.model.User;
-import com.itt.newsAggregation.notification.EmailService;
-import com.itt.newsAggregation.repository.ArticleRepository;
-import com.itt.newsAggregation.repository.SavedArticleRepository;
-import com.itt.newsAggregation.repository.UserRepository;
+import com.itt.newsAggregation.model.*;
+import com.itt.newsAggregation.notification.NotificationDispatcher;
+import com.itt.newsAggregation.repository.*;
 import com.itt.newsAggregation.service.ArticleService;
 import com.itt.newsAggregation.service.CategoryService;
-import com.itt.newsAggregation.service.NotificationPreferenceService;
+import com.itt.newsAggregation.service.UserReactionService;
+import com.itt.newsAggregation.service.UserReadArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,60 +42,96 @@ public class ArticleServiceImpl implements ArticleService {
     private CategoryService categoryService;
 
     @Autowired
-    private NotificationPreferenceService notificationPreferenceService;
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    private EmailService emailService;
+    private UserReactionService userReactionService;
 
+    @Autowired
+    private UserReadArticleService userReadArticleService;
+
+    @Autowired
+    private UserReadArticleRepository userReadArticleRepository;
+
+    @Autowired
+    private CategoryKeywordCacheService keywordCacheService;
 
     @Override
     public void saveArticles(List<ArticleDto> articles) {
+
         List<Article> newArticles = new ArrayList<>();
         for (ArticleDto dto : articles) {
             if (!articleRepository.existsByUrl(dto.getUrl())) {
                 String categoryName = assignCategory(dto);
-                if( !categoryService.existsByName(categoryName)) {
-                    CategoryDto categoryDto = CategoryDto.builder().name(categoryName).build();
+                if (!categoryService.existsByName(categoryName)) {
+                    CategoryRequestDto categoryDto = CategoryRequestDto.builder().name(categoryName).build();
                     categoryService.createCategory(categoryDto);
                 }
                 Category category = categoryService.findByName(categoryName).get();
-
-                Article article = Article.builder()
-                        .title(dto.getTitle())
-                        .content(dto.getContent())
-                        .source(dto.getSource())
-                        .url(dto.getUrl())
-                        .category(category)
-                        .publishedAt(dto.getPublishedAt())
-                        .createdAt(LocalDateTime.now())
-                        .build();
+                Article article = mapToArticle.apply(dto);
+                article.setCategory(category);
                 newArticles.add(article);
             }
         }
         if (!newArticles.isEmpty()) {
             List<Article> savedArticles = articleRepository.saveAll(newArticles);
-            notifyUsers(savedArticles);
+            notificationDispatcher.notifyUsers(savedArticles);
         }
     }
 
     @Override
-    public List<ArticleDto> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-        List<ArticleDto> articleDtos = new ArrayList<>();
-        for (Article article : articles) {
-            articleDtos.add(mapToArticleDto.apply(article));
+    public List<NewsHeadlineResponseDto> getHeadlines(Integer categoryId, String startDateStr, String endDateStr) {
+        LocalDate startDate = (startDateStr != null) ? LocalDate.parse(startDateStr) : LocalDate.MIN;
+        LocalDate endDate = (endDateStr != null) ? LocalDate.parse(endDateStr) : LocalDate.now();
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay().minusSeconds(1);
+
+        List<Article> articles;
+
+        if (categoryId != null) {
+            articles = articleRepository.findByCategoryIdAndPublishedAtBetween(categoryId, startDateTime, endDateTime);
+        } else {
+            articles = articleRepository.findByPublishedAtBetween(startDateTime, endDateTime);
         }
-        return articleDtos;
+
+        return articles.stream()
+                .map(article -> NewsHeadlineResponseDto.builder()
+                        .id(article.getId())
+                        .title(article.getTitle())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<NewsHeadlineResponseDto> getAllHeadlines()
-    {
-        List<NewsHeadlineResponseDto> headlines = articleRepository.findAll().stream().map(article -> NewsHeadlineResponseDto.builder()
+    public List<NewsHeadlineResponseDto> getAllHeadlines() {
+        return articleRepository.findAll().stream().map(article -> NewsHeadlineResponseDto.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .build()).collect(Collectors.toList());
-        return headlines;
+    }
+
+    @Override
+    public List<ArticleDto> getArticlesByDateRange(String startDateStr, String endDateStr) {
+        LocalDate startDate;
+        LocalDate endDate;
+
+        if (startDateStr == null && endDateStr == null) {
+            startDate = LocalDate.now();
+            endDate = startDate;
+        } else {
+            startDate = (startDateStr != null) ? LocalDate.parse(startDateStr) : LocalDate.MIN;
+            endDate = (endDateStr != null) ? LocalDate.parse(endDateStr) : LocalDate.now();
+        }
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay().minusSeconds(1); // end of day
+
+        List<Article> articles = articleRepository.findByPublishedAtBetween(startDateTime, endDateTime);
+
+        return articles.stream()
+                .map(mapToArticleDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -118,13 +153,43 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<SavedArticleDto> getSavedArticles(String username) {
+    public List<ArticleDto> getSavedArticles(String username) {
         List<SavedArticle> savedArticles = savedArticleRepository.findByUserUsername(username);
-        List<SavedArticleDto> savedArticleDtos = new ArrayList<>();
+        List<ArticleDto> savedArticleDtos = new ArrayList<>();
         for (SavedArticle savedArticle : savedArticles) {
-            savedArticleDtos.add(mapToSavedArticleDto.apply(savedArticle));
+            ArticleDto articleById = getArticleById(savedArticle.getArticle().getId());
+            if(articleById != null){
+                savedArticleDtos.add(articleById);
+            }
         }
         return savedArticleDtos;
+    }
+
+    @Override
+    public ArticleDto readArticle(Integer userId, Integer articleId) {
+        Optional<Article> articleOpt = articleRepository.findById(articleId);
+        if (articleOpt.isPresent()) {
+            userReadArticleService.markAsRead(userId, articleId);
+            return mapToArticleDto.apply(articleOpt.get());
+        }
+        throw new ResourceNotFoundException("Article not found with id: " + articleId);
+    }
+
+    public List<ArticleDto> getLikedArticles(Integer userId) {
+        List<UserReactionDto> userReactions = userReactionService.getUserReactions(userId);
+
+        return userReactions.stream()
+                .filter(reaction -> reaction.getReaction() == UserReaction.ReactionType.LIKE)
+                .map(reaction -> getArticleById(reaction.getArticleId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDto> getViewedArticles(Integer userId) {
+        return userReadArticleRepository.findByUserId(userId).stream()
+                .map(UserReadArticle::getArticle)
+                .map(article -> getArticleById(article.getId()))
+                .toList();
     }
 
     @Override
@@ -145,61 +210,12 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
-
     private String assignCategory(ArticleDto dto) {
-    String text = (dto.getTitle() + " " + dto.getContent()).toLowerCase();
-
-    if (text.contains("sport") || text.contains("football")) return "Sports";
-    if (text.contains("business") || text.contains("market")) return "Business";
-    if (text.contains("movie") || text.contains("music")) return "Entertainment";
-    if (text.contains("tech") || text.contains("ai")) return "Technology";
-    return "General";
+        String text = (dto.getTitle() + " " + dto.getContent()).toLowerCase();
+        return keywordCacheService.getCategoryForText(text);
     }
 
-    @Async
-    private void notifyUsers(List<Article> articles) {
-        if (articles.isEmpty()) {
-            log.info("No new articles to notify users about.");
-            return;
-        }
-
-        List<NotificationPreferenceDto> allPrefs = notificationPreferenceService.getAllNotificationPreferences();
-
-        Map<String, List<String>> articlesByCategory = articles.stream()
-                .collect(Collectors.groupingBy(
-                        a -> a.getCategory().getName(),
-                        Collectors.mapping(Article::getUrl, Collectors.toList())
-                ));
-
-        for (NotificationPreferenceDto pref : allPrefs) {
-            if (!pref.getIsEnabled()) continue;
-
-            String username = pref.getUsername();
-            String category = pref.getCategory();
-            List<String> urls = articlesByCategory.getOrDefault(category, List.of());
-
-            if (urls.isEmpty()) continue;
-
-            Optional<User> userOpt = userRepository.findByUsername(username);
-            if (userOpt.isEmpty()) continue;
-
-            User user = userOpt.get();
-            log.info("Sending notification to user: {}", username);
-
-            emailService.sendEmail(
-                    EmailRequest.builder()
-                            .to(user.getEmail())
-                            .subject("New Articles in " + category)
-                            .body("Hello " + user.getUsername() + ",\n\n" +
-                                    "Here are the new articles in the " + category + " category:\n" +
-                                    String.join("\n", urls) +
-                                    "\n\nBest regards,\nNews Aggregation Team")
-                            .build()
-            );
-        }
-    }
-
-    private final Function<Article, ArticleDto> mapToArticleDto = article -> ArticleDto.builder()
+    public final Function<Article, ArticleDto> mapToArticleDto = article -> ArticleDto.builder()
             .id(article.getId())
             .title(article.getTitle())
             .content(article.getContent())
@@ -209,12 +225,18 @@ public class ArticleServiceImpl implements ArticleService {
             .publishedAt(article.getPublishedAt())
             .build();
 
-    private final Function<SavedArticle, SavedArticleDto> mapToSavedArticleDto = savedArticle -> SavedArticleDto.builder()
+    public final Function<ArticleDto, Article> mapToArticle = dto -> Article.builder()
+            .title(dto.getTitle())
+            .content(dto.getContent())
+            .source(dto.getSource())
+            .url(dto.getUrl())
+            .publishedAt(dto.getPublishedAt())
+            .createdAt(LocalDateTime.now())
+            .build();
+
+    public final Function<SavedArticle, SavedArticleDto> mapToSavedArticleDto = savedArticle -> SavedArticleDto.builder()
             .userId(savedArticle.getUser().getId())
             .articleId(savedArticle.getArticle().getId())
             .savedAt(savedArticle.getSavedAt())
             .build();
-
-
 }
-

@@ -1,4 +1,4 @@
-package com.itt.newsAggregation.dto;
+package com.itt.newsAggregation.dto.common;
 
 import lombok.*;
 

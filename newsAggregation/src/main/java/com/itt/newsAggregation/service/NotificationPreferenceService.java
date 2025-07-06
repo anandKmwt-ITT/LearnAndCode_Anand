@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.service;
 
-import com.itt.newsAggregation.dto.NotificationPreferenceDto;
+import com.itt.newsAggregation.dto.common.NotificationPreferenceDto;
 
 import java.util.List;
 

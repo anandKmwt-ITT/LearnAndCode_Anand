@@ -1,4 +1,4 @@
-package com.itt.newsAggregation.dto;
+package com.itt.newsAggregation.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NotificationPreferenceDto {
-    private String username;
-    private String category;
-    private Boolean isEnabled;
+public class CategoryResponseDto {
+    private Integer id;
+    private String name;
 }

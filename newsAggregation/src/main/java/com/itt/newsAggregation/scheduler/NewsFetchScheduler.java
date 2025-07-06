@@ -1,9 +1,8 @@
 package com.itt.newsAggregation.scheduler;
 
-import com.itt.newsAggregation.dto.ArticleDto;
-import com.itt.newsAggregation.dto.NotificationPreferenceDto;
+import com.itt.newsAggregation.dto.common.ArticleDto;
 import com.itt.newsAggregation.service.ArticleService;
-import com.itt.newsAggregation.service.NewsFetcher;
+import com.itt.newsAggregation.external.NewsFetcher;
 import com.itt.newsAggregation.service.NotificationPreferenceService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

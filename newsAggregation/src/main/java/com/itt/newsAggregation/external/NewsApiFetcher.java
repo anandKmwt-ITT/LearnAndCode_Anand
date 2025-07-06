@@ -1,6 +1,7 @@
-package com.itt.newsAggregation.service;
+package com.itt.newsAggregation.external;
 
-import com.itt.newsAggregation.dto.ArticleDto;
+import com.itt.newsAggregation.dto.common.ArticleDto;
+import com.itt.newsAggregation.service.ApiClientService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TheNewsApiFetcher implements NewsFetcher {
+public class NewsApiFetcher implements NewsFetcher {
 
-    private static final String CLIENT_NAME = "TheNewsAPI";
+    private static final String CLIENT_NAME = "NewsAPI";
 
     @Autowired
     private ApiClientService apiClientService;
@@ -24,33 +24,25 @@ public class TheNewsApiFetcher implements NewsFetcher {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Override
     public List<ArticleDto> fetchArticles() {
+
         String url = apiClientService.getApiClientByName(CLIENT_NAME);
+
         String response = restTemplate.exchange(url, HttpMethod.GET, null, String.class).getBody();
 
         JSONObject json = new JSONObject(response);
-        JSONArray articles = json.getJSONArray("data");
+        JSONArray articles = json.getJSONArray("articles");
 
         List<ArticleDto> list = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
         for (int i = 0; i < articles.length(); i++) {
             JSONObject obj = articles.getJSONObject(i);
-
-            LocalDateTime publishedAt = null;
-            try {
-                publishedAt = LocalDateTime.parse(obj.optString("published_at", ""), formatter);
-            } catch (Exception e) {
-                publishedAt = LocalDateTime.now();
-            }
-
             list.add(ArticleDto.builder()
                     .title(obj.optString("title", "Untitled"))
-                    .content(obj.optString("description", ""))
+                    .content(obj.optString("content", ""))
                     .url(obj.optString("url", ""))
-                    .source(obj.optString("source", "Unknown"))
-                    .publishedAt(publishedAt)
+                    .source(obj.optJSONObject("source").optString("name", "Unknown"))
+                    .publishedAt(LocalDateTime.now())
                     .build());
         }
 

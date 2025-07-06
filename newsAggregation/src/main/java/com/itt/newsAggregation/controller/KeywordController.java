@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.controller;
 
-import com.itt.newsAggregation.dto.KeywordDto;
+import com.itt.newsAggregation.dto.common.KeywordDto;
 import com.itt.newsAggregation.service.KeywordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

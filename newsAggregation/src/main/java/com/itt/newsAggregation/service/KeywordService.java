@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.service;
 
-import com.itt.newsAggregation.dto.KeywordDto;
+import com.itt.newsAggregation.dto.common.KeywordDto;
 
 import java.util.List;
 

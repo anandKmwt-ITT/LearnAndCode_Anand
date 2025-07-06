@@ -1,4 +1,4 @@
-package com.itt.newsAggregation.dto;
+package com.itt.newsAggregation.dto.request;
 
 import lombok.*;
 
@@ -6,6 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoryDto {
+public class CategoryRequestDto {
     private String name;
 }

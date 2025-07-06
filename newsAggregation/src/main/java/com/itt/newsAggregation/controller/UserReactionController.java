@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.controller;
 
-import com.itt.newsAggregation.dto.UserReactionDto;
+import com.itt.newsAggregation.dto.common.UserReactionDto;
 import com.itt.newsAggregation.service.UserReactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,12 @@ public class UserReactionController {
 
     @PostMapping
     public ResponseEntity<?> addOrUpdateReaction(@RequestBody UserReactionDto dto) {
-        reactionService.addOrUpdateReaction(dto);
-        return ResponseEntity.ok("Reaction saved");
+        boolean success = reactionService.addOrUpdateReaction(dto);
+        if (success) {
+            return ResponseEntity.ok("✅ Reaction saved/updated.");
+        } else {
+            return ResponseEntity.status(200).body("⚠️ Reaction already exists with same type.");
+        }
     }
 
     @DeleteMapping

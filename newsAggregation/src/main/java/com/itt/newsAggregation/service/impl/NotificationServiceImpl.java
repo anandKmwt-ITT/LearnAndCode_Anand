@@ -5,13 +5,16 @@ import com.itt.newsAggregation.model.Notification;
 import com.itt.newsAggregation.model.User;
 import com.itt.newsAggregation.repository.NotificationRepository;
 import com.itt.newsAggregation.repository.UserRepository;
+import com.itt.newsAggregation.service.NotificationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class NotificationServiceImpl implements NotificationService{
+@Slf4j
+public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     private UserRepository userRepository;
@@ -25,5 +28,14 @@ public class NotificationServiceImpl implements NotificationService{
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
         List<Notification> notifications = notificationRepository.findByUser(user);
         return notifications.isEmpty() ? List.of() : notifications;
+    }
+
+    public void saveNotification(Notification notification) {
+        try {
+            notificationRepository.save(notification);
+            log.info("Notification saved for user: {}", notification.getUser().getUsername());
+        } catch (Exception e) {
+            log.error("Error storing notification for user {}: {}", notification.getUser().getUsername(), e.getMessage());
+        }
     }
 }

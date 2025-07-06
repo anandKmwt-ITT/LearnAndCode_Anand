@@ -1,7 +1,7 @@
 package com.itt.newsAggregation.controller;
 
-import com.itt.newsAggregation.dto.UserRequestDto;
-import com.itt.newsAggregation.dto.UserResponseDto;
+import com.itt.newsAggregation.dto.request.UserRequestDto;
+import com.itt.newsAggregation.dto.response.UserResponseDto;
 import com.itt.newsAggregation.response.ApiResponse;
 import com.itt.newsAggregation.response.AuthResponse;
 import com.itt.newsAggregation.service.AuthenticationService;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @Slf4j
 public class UserController {
 
@@ -43,7 +43,7 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserRequestDto userDto){
         UserResponseDto savedUser = userService.registerUser(userDto);
         ApiResponse<UserResponseDto> response = ApiResponse.<UserResponseDto>builder()
@@ -55,16 +55,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("authenticate")
+    @PostMapping("/authenticate")
     public ResponseEntity<?> authenticateUser(@RequestBody UserRequestDto userDto) {
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
+            UserResponseDto userResponse = userService.getUserByUsername(userDto.getUsername());
             AuthResponse authResponse = AuthResponse.builder()
                     .token(jwt)
                     .role(userDetails.getAuthorities().stream().toList().get(0).getAuthority())
+                    .currentUserId(userResponse.getId())
                     .build();
             return new ResponseEntity<>(authResponse, HttpStatus.OK);
         }catch (AuthenticationException exception){

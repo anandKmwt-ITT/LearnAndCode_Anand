@@ -1,7 +1,7 @@
 package com.itt.newsAggregation.controller;
 
-import com.itt.newsAggregation.dto.ApiClientDto;
-import com.itt.newsAggregation.dto.ApiClientResponseDto;
+import com.itt.newsAggregation.dto.common.ApiClientDto;
+import com.itt.newsAggregation.dto.response.ApiClientResponseDto;
 import com.itt.newsAggregation.service.ApiClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,13 +36,13 @@ public class ApiClientController {
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
-    @GetMapping("/key")
+    @GetMapping("/by-name")
     public ResponseEntity<String> getApiKeyByName(@RequestParam String name) {
         String apiKey = apiClientService.getApiClientByName(name);
         return ResponseEntity.ok(apiKey);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ApiClientResponseDto>> getAllClients() {
         List<ApiClientResponseDto> allClients = apiClientService.getAllClients();
         if (allClients.isEmpty()) {

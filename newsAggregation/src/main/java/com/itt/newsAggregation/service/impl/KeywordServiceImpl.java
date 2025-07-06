@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.service.impl;
 
-import com.itt.newsAggregation.dto.KeywordDto;
+import com.itt.newsAggregation.dto.common.KeywordDto;
 import com.itt.newsAggregation.exception.ResourceNotFoundException;
 import com.itt.newsAggregation.exception.UserNotFoundException;
 import com.itt.newsAggregation.model.Category;

@@ -1,6 +1,6 @@
-package com.itt.newsAggregation.service;
+package com.itt.newsAggregation.external;
 
-import com.itt.newsAggregation.dto.ArticleDto;
+import com.itt.newsAggregation.dto.common.ArticleDto;
 
 import java.util.List;
 

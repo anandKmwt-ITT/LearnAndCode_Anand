@@ -1,6 +1,6 @@
 package com.itt.newsAggregation.service.impl;
 
-import com.itt.newsAggregation.dto.NotificationPreferenceDto;
+import com.itt.newsAggregation.dto.common.NotificationPreferenceDto;
 import com.itt.newsAggregation.model.Category;
 import com.itt.newsAggregation.model.NotificationPreference;
 import com.itt.newsAggregation.model.User;

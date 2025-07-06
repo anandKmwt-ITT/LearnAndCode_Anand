@@ -1,6 +1,8 @@
 package com.itt.newsAggregation.service.impl;
 
-import com.itt.newsAggregation.dto.CategoryDto;
+import com.itt.newsAggregation.dto.request.CategoryRequestDto;
+import com.itt.newsAggregation.dto.response.CategoryResponseDto;
+import com.itt.newsAggregation.exception.ResourceNotFoundException;
 import com.itt.newsAggregation.model.Category;
 import com.itt.newsAggregation.repository.CategoryRepository;
 import com.itt.newsAggregation.service.CategoryService;
@@ -17,26 +19,29 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private CategoryKeywordCacheService categoryKeywordCacheService;
+
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto) {
+    public CategoryResponseDto createCategory(CategoryRequestDto categoryDto) {
         boolean exists = categoryRepository.existsByName(categoryDto.getName());
         if(exists) {
             throw new IllegalArgumentException("Category with name " + categoryDto.getName() + " already exists.");
         }
-        Category category = mapToCategory.apply(categoryDto);
-        Category savedCategory = categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(mapToCategory.apply(categoryDto));
+        categoryKeywordCacheService.refreshCache();
         return mapToCategoryDto.apply(savedCategory);
     }
 
     @Override
-    public CategoryDto getCategoryById(Integer id) {
+    public CategoryResponseDto getCategoryById(Integer id) {
         return categoryRepository.findById(id)
                 .map(mapToCategoryDto)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with ID: " + id));
     }
 
     @Override
-    public List<CategoryDto> getAllCategories() {
+    public List<CategoryResponseDto> getAllCategories() {
         return categoryRepository.findAll()
                 .stream()
                 .map(mapToCategoryDto)
@@ -53,11 +58,21 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.existsByName(name);
     }
 
-    private Function<Category, CategoryDto> mapToCategoryDto = category -> CategoryDto.builder()
+    @Override
+    public CategoryResponseDto getCategoryDetailsByName(String name) {
+        Optional<Category> fetchedCategory = categoryRepository.findByName(name);
+        if (!fetchedCategory.isPresent()){
+            throw new ResourceNotFoundException("Category not found by name: "+ name);
+        }
+        return mapToCategoryDto.apply(fetchedCategory.get());
+    }
+
+    private Function<Category, CategoryResponseDto> mapToCategoryDto = category -> CategoryResponseDto.builder()
+            .id(category.getId())
             .name(category.getName())
             .build();
 
-    private Function<CategoryDto, Category> mapToCategory = categoryDto -> Category.builder()
+    private Function<CategoryRequestDto, Category> mapToCategory = categoryDto -> Category.builder()
             .name(categoryDto.getName())
             .build();
 

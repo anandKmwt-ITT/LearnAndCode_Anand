@@ -1,18 +1,17 @@
-package com.itt.newsAggregation.dto;
+package com.itt.newsAggregation.dto.common;
 
+import com.itt.newsAggregation.model.UserReaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SavedArticleDto {
+public class UserReactionDto {
     private Integer userId;
     private Integer articleId;
-    private LocalDateTime savedAt;
+    private UserReaction.ReactionType reaction;
 }

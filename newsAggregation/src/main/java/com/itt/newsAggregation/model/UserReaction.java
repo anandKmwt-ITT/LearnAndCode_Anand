@@ -39,6 +39,7 @@ public class UserReaction {
 
     public enum ReactionType {
         LIKE,
-        DISLIKE
+        DISLIKE,
+        UNLIKE
     }
 }

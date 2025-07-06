@@ -30,7 +30,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(request -> request
                         .requestMatchers("/api/clients/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/api/category-keywords/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
