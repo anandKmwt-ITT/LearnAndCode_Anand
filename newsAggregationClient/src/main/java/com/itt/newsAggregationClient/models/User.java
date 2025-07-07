@@ -1,4 +1,4 @@
-package com.itt.newsAggrigationClient.models;
+package com.itt.newsAggregationClient.models;
 
 public class User {
     public String username;

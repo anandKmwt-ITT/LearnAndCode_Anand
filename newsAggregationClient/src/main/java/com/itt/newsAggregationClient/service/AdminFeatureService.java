@@ -1,19 +1,19 @@
-package com.itt.newsAggrigationClient.service;
+package com.itt.newsAggregationClient.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itt.newsAggrigationClient.models.ApiClientDto;
-import com.itt.newsAggrigationClient.models.CategoryDto;
-import com.itt.newsAggrigationClient.models.CategoryKeywordDto;
+import com.itt.newsAggregationClient.models.ApiClientDto;
+import com.itt.newsAggregationClient.models.CategoryDto;
+import com.itt.newsAggregationClient.models.CategoryKeywordDto;
 
 import java.net.URI;
 import java.net.http.*;
 import java.util.List;
 import java.util.Scanner;
 
-import static com.itt.newsAggrigationClient.util.ApiEndpoints.*;
-import static com.itt.newsAggrigationClient.util.HttpStatusCodes.Created;
-import static com.itt.newsAggrigationClient.util.HttpStatusCodes.OK;
+import static com.itt.newsAggregationClient.util.ApiEndpoints.*;
+import static com.itt.newsAggregationClient.util.HttpStatusCodes.Created;
+import static com.itt.newsAggregationClient.util.HttpStatusCodes.OK;
 
 public class AdminFeatureService {
     private final HttpClient client = HttpClient.newHttpClient();

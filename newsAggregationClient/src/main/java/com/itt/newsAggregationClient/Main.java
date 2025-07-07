@@ -1,9 +1,10 @@
-package com.itt.newsAggrigationClient;
+package com.itt.newsAggregationClient;
 
-import com.itt.newsAggrigationClient.models.AuthResponse;
-import com.itt.newsAggrigationClient.service.UserFeatureService;
-import com.itt.newsAggrigationClient.service.AdminFeatureService;
-import com.itt.newsAggrigationClient.util.ConsoleUtils;
+import com.itt.newsAggregationClient.models.AuthResponse;
+import com.itt.newsAggregationClient.service.AuthService;
+import com.itt.newsAggregationClient.service.UserFeatureService;
+import com.itt.newsAggregationClient.service.AdminFeatureService;
+import com.itt.newsAggregationClient.util.ConsoleUtils;
 
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class Main {
 
     private final AdminFeatureService adminService = new AdminFeatureService();
     private final UserFeatureService userFeatureService = new UserFeatureService();
-    private final com.itt.newsAggrigationClient.services.AuthService userService = new com.itt.newsAggrigationClient.services.AuthService();
+    private final AuthService userService = new AuthService();
     private final Scanner scanner = new Scanner(System.in);
     public static String username = null;
     private int userId = 0;

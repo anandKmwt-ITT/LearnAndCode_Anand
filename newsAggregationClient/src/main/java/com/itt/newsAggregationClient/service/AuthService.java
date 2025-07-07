@@ -1,14 +1,17 @@
-package com.itt.newsAggrigationClient.services;
+package com.itt.newsAggregationClient.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itt.newsAggrigationClient.Main;
-import com.itt.newsAggrigationClient.models.AuthRequest;
-import com.itt.newsAggrigationClient.models.AuthResponse;
-import com.itt.newsAggrigationClient.models.User;
+import com.itt.newsAggregationClient.Main;
+import com.itt.newsAggregationClient.models.AuthRequest;
+import com.itt.newsAggregationClient.models.AuthResponse;
+import com.itt.newsAggregationClient.models.User;
 
 import java.net.URI;
 import java.net.http.*;
 import java.util.Scanner;
+
+import static com.itt.newsAggregationClient.util.HttpStatusCodes.Created;
+import static com.itt.newsAggregationClient.util.HttpStatusCodes.OK;
 
 public class AuthService {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -33,7 +36,7 @@ public class AuthService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == 201){
+            if(response.statusCode() == Created){
                 System.out.println("Registration successful!!!\n");
             }
         } catch (Exception e) {
@@ -58,7 +61,7 @@ public class AuthService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 AuthResponse authResponse = mapper.readValue(response.body(), AuthResponse.class);
                 Main.username = username;
                 System.out.println("Login successful.");

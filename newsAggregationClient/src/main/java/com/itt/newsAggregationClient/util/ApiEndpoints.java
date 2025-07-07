@@ -1,4 +1,4 @@
-package com.itt.newsAggrigationClient.util;
+package com.itt.newsAggregationClient.util;
 
 public class ApiEndpoints {
 
