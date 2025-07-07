@@ -19,11 +19,13 @@ public class EmailNotificationSender implements NotificationSender {
     @Async
     public void sendNotification(EmailRequest request) {
         try {
+            log.info("📧 Sending email on thread: {}", Thread.currentThread().getName());
             SimpleMailMessage mail = new SimpleMailMessage();
             mail.setTo(request.getTo());
             mail.setSubject(request.getSubject());
             mail.setText(request.getBody());
             javaMailSender.send(mail);
+            log.info("✅ Email sent to {}", request.getTo());
         } catch (Exception e) {
             log.error("Exception while sendEmail ", e);
         }

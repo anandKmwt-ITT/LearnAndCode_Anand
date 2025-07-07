@@ -39,6 +39,7 @@ public class NotificationDispatcher {
     private KeywordService keywordService;
 
     public void notifyUsers(List<Article> articles) {
+        log.info("🔔 Dispatching notifications on thread: {}", Thread.currentThread().getName());
         if (articles.isEmpty()) {
             log.info("No new articles to notify users about.");
             return;
