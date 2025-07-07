@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import static com.itt.newsAggrigationClient.util.ApiEndpoints.*;
+import static com.itt.newsAggrigationClient.util.HttpStatusCodes.Created;
+import static com.itt.newsAggrigationClient.util.HttpStatusCodes.OK;
 
 public class AdminFeatureService {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -29,7 +31,7 @@ public class AdminFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<ApiClientDto> clients = mapper.readValue(response.body(), new TypeReference<>() {});
                 System.out.println("--- External Servers and Status ---");
                 for (ApiClientDto dto : clients) {
@@ -53,7 +55,7 @@ public class AdminFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<ApiClientDto> clients = mapper.readValue(response.body(), new TypeReference<>() {});
                 System.out.println("\nList of external server details:");
                 int index = 1;
@@ -88,7 +90,7 @@ public class AdminFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 ApiClientDto updated = mapper.readValue(response.body(), ApiClientDto.class);
                 System.out.println("Updated client: " + updated);
             } else {
@@ -115,7 +117,7 @@ public class AdminFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 201) {
+            if (response.statusCode() == Created) {
                 CategoryDto created = mapper.readValue(response.body(), CategoryDto.class);
                 System.out.println("Category created: " + created.name);
             } else {
@@ -149,7 +151,7 @@ public class AdminFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 CategoryKeywordDto created = mapper.readValue(response.body(), CategoryKeywordDto.class);
                 System.out.println("✅ Keyword added: " + created.keyword + " to category: " + created.categoryName);
             } else {
@@ -171,7 +173,7 @@ public class AdminFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<CategoryDto> categories = mapper.readValue(response.body(), new TypeReference<>() {});
                 System.out.println("📋 Available Categories:");
                 for (CategoryDto category : categories) {

@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import static com.itt.newsAggrigationClient.util.ApiEndpoints.*;
+import static com.itt.newsAggrigationClient.util.HttpStatusCodes.Created;
+import static com.itt.newsAggrigationClient.util.HttpStatusCodes.OK;
 
 public class UserFeatureService {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -98,7 +100,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<NewsHeadlineResponseDto> headlines = mapper.readValue(response.body(), new TypeReference<>() {});
                 if (headlines.isEmpty()) {
                     System.out.println("No headlines found.");
@@ -160,7 +162,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<SavedArticleDto> articles = mapper.readValue(response.body(), new TypeReference<List<SavedArticleDto>>() {});
                 if (articles.isEmpty()) {
                     System.out.println("No saved articles.\n");
@@ -188,7 +190,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<ArticleDto> likedArticles = mapper.readValue(response.body(), new TypeReference<>() {});
                 if (likedArticles.isEmpty()) {
                     System.out.println("🫥 You haven't liked any articles yet.");
@@ -220,7 +222,7 @@ public class UserFeatureService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.statusCode());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<Notification> notifications = mapper.readValue(response.body(), new TypeReference<>() {
                 });
                 if (notifications.isEmpty()) {
@@ -251,7 +253,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<ArticleDto> articles = mapper.readValue(response.body(), new TypeReference<List<ArticleDto>>() {});
                 if (articles.isEmpty()) {
                     System.out.println("🔍 No articles found for keyword: " + keyword);
@@ -312,7 +314,7 @@ public class UserFeatureService {
 
             HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-            if (getResponse.statusCode() != 200) {
+            if (getResponse.statusCode() != OK) {
                 System.out.println("❌ Failed to fetch preferences.");
                 return;
             }
@@ -417,7 +419,7 @@ public class UserFeatureService {
                                 .build();
 
                         HttpResponse<String> updateResponse = client.send(updateRequest, HttpResponse.BodyHandlers.ofString());
-                        if (updateResponse.statusCode() == 200) {
+                        if (updateResponse.statusCode() == OK) {
                             System.out.println("✅ Updated preference.");
                         } else {
                             System.out.println("❌ Failed to update preference.");
@@ -444,7 +446,7 @@ public class UserFeatureService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<KeywordDto> keywordDtos = mapper.readValue(response.body(), new TypeReference<>() {});
                 return keywordDtos.stream().map(k -> k.name).toList();
             } else {
@@ -466,7 +468,7 @@ public class UserFeatureService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 CategoryDto category = mapper.readValue(response.body(), CategoryDto.class);
                 return category.id;
             } else {
@@ -488,7 +490,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 return mapper.readValue(response.body(), new TypeReference<>() {});
             } else {
                 System.out.println("❌ Failed to fetch categories. Status: " + response.statusCode());
@@ -518,7 +520,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 201 || response.statusCode() == 200) {
+            if (response.statusCode() == Created || response.statusCode() == OK) {
                 System.out.println("✅ Keyword added successfully.");
             } else {
                 System.out.println("❌ Failed to add keyword. Status: " + response.statusCode());
@@ -546,7 +548,7 @@ public class UserFeatureService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 System.out.println("✅ Keywords updated.");
             } else {
                 System.out.println("❌ Failed to update keywords.");
@@ -569,7 +571,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 List<ArticleDto> viewedArticles = mapper.readValue(response.body(), new TypeReference<>() {});
                 if (viewedArticles.isEmpty()) {
                     System.out.println("🫥 You haven't read any articles yet.");
@@ -600,7 +602,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == OK) {
                 ArticleDto article = mapper.readValue(response.body(), ArticleDto.class);
 
                 System.out.println("\n=========== Full Article ===========");
@@ -696,7 +698,7 @@ public class UserFeatureService {
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                if (response.statusCode() == 200) {
+                if (response.statusCode() == OK) {
                     System.out.println("✅ Reaction processed: " + reaction);
                 }
                 else {
@@ -719,7 +721,7 @@ public class UserFeatureService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 201) {
+            if (response.statusCode() == Created) {
                 System.out.println("✅ Article saved successfully!");
             } else {
                 System.out.println("❌ Failed to save article. Status: " + response.statusCode());
