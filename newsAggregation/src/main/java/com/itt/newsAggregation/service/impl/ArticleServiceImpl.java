@@ -63,10 +63,6 @@ public class ArticleServiceImpl implements ArticleService {
         for (ArticleDto dto : articles) {
             if (!articleRepository.existsByUrl(dto.getUrl())) {
                 String categoryName = assignCategory(dto);
-                if (!categoryService.existsByName(categoryName)) {
-                    CategoryRequestDto categoryDto = CategoryRequestDto.builder().name(categoryName).build();
-                    categoryService.createCategory(categoryDto);
-                }
                 Category category = categoryService.findByName(categoryName).get();
                 Article article = mapToArticle.apply(dto);
                 article.setCategory(category);
@@ -149,7 +145,7 @@ public class ArticleServiceImpl implements ArticleService {
 
             return mapToSavedArticleDto.apply(savedArticle1);
         }
-        throw new IllegalArgumentException("User or Article not found");
+        throw new ResourceNotFoundException("User or Article not found");
     }
 
     @Override
