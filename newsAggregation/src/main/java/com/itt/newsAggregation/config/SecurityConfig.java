@@ -31,7 +31,14 @@ public class SecurityConfig {
         return http.authorizeHttpRequests(request -> request
                         .requestMatchers("/api/clients/**").hasRole("ADMIN")
                         .requestMatchers("/api/category-keywords/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers("/api/category-keywords/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
