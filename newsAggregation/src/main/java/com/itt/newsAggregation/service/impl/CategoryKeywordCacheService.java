@@ -31,11 +31,10 @@ public class CategoryKeywordCacheService {
     }
 
     public String getCategoryForText(String text) {
-        String lowerText = text.toLowerCase();
 
         for (Map.Entry<String, List<String>> entry : categoryKeywords.entrySet()) {
             for (String keyword : entry.getValue()) {
-                if (lowerText.contains(keyword)) {
+                if (text.contains(keyword)) {
                     return entry.getKey();
                 }
             }

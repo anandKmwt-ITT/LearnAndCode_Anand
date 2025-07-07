@@ -5,6 +5,7 @@ import com.itt.newsAggregation.service.ArticleService;
 import com.itt.newsAggregation.external.NewsFetcher;
 import com.itt.newsAggregation.service.NotificationPreferenceService;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,23 +17,19 @@ import java.util.List;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NewsFetchScheduler {
 
-    @Autowired
-    private List<NewsFetcher> newsFetchers;
-
-    @Autowired
-    private ArticleService articleService;
-
-    @Autowired
-    private NotificationPreferenceService notificationPreferenceService;
+    private final List<NewsFetcher> newsFetchers;
+    private final ArticleService articleService;
+    private final NotificationPreferenceService notificationPreferenceService;
 
     @PostConstruct
     public void fetchOnStartup() {
         fetchNewsArticles();
     }
 
-    @Scheduled(cron = "0 0 */4 * * *")
+    @Scheduled(cron = "0 0 */3 * * *")
     public void fetchNewsArticles() {
         List<ArticleDto> articles = fetchFromAvailableSources();
 

@@ -62,6 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<Article> newArticles = new ArrayList<>();
         for (ArticleDto dto : articles) {
             if (!articleRepository.existsByUrl(dto.getUrl())) {
+                System.out.println();
                 String categoryName = assignCategory(dto);
                 if (!categoryService.existsByName(categoryName)) {
                     CategoryRequestDto categoryDto = CategoryRequestDto.builder().name(categoryName).build();
@@ -73,6 +74,7 @@ public class ArticleServiceImpl implements ArticleService {
                 newArticles.add(article);
             }
         }
+        System.out.println(newArticles);
         if (!newArticles.isEmpty()) {
             List<Article> savedArticles = articleRepository.saveAll(newArticles);
             notificationDispatcher.notifyUsers(savedArticles);
