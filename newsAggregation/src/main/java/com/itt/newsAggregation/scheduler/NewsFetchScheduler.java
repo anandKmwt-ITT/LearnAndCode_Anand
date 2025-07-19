@@ -24,10 +24,10 @@ public class NewsFetchScheduler {
     private final ArticleService articleService;
     private final NotificationPreferenceService notificationPreferenceService;
 
-    @PostConstruct
-    public void fetchOnStartup() {
-        fetchNewsArticles();
-    }
+//    @PostConstruct
+//    public void fetchOnStartup() {
+//        fetchNewsArticles();
+//    }
 
     @Scheduled(cron = "0 0 */3 * * *")
     public void fetchNewsArticles() {

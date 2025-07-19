@@ -1,13 +1,14 @@
 package com.itt.newsAggregation.controller;
 
 import com.itt.newsAggregation.dto.common.ArticleDto;
-import com.itt.newsAggregation.dto.response.NewsHeadlineResponseDto;
 import com.itt.newsAggregation.dto.common.SavedArticleDto;
+import com.itt.newsAggregation.dto.response.NewsHeadlineResponseDto;
 import com.itt.newsAggregation.service.ArticleService;
 import com.itt.newsAggregation.service.UserReadArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,4 +89,19 @@ public class ArticleController {
         return ResponseEntity.ok(articles);
     }
 
+    @PatchMapping("/hide-article/{id}/visibility")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> hideArticle(@PathVariable Integer id, @RequestParam boolean hidden) {
+        String result = articleService.updateArticleHiddenStatus(id, hidden);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping("/toggle-articles-visibility")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> toggleArticlesByKeyword(
+            @RequestParam String keyword,
+            @RequestParam boolean hidden) {
+        String message = articleService.toggleArticlesByKeyword(keyword, hidden);
+        return ResponseEntity.ok(message);
+    }
 }

@@ -3,16 +3,15 @@ package com.itt.newsAggregation.service.impl;
 import com.itt.newsAggregation.dto.common.ArticleDto;
 import com.itt.newsAggregation.dto.common.SavedArticleDto;
 import com.itt.newsAggregation.dto.common.UserReactionDto;
-import com.itt.newsAggregation.dto.request.CategoryRequestDto;
 import com.itt.newsAggregation.dto.response.NewsHeadlineResponseDto;
 import com.itt.newsAggregation.exception.ResourceNotFoundException;
 import com.itt.newsAggregation.model.*;
 import com.itt.newsAggregation.notification.NotificationDispatcher;
-import com.itt.newsAggregation.repository.*;
-import com.itt.newsAggregation.service.ArticleService;
-import com.itt.newsAggregation.service.CategoryService;
-import com.itt.newsAggregation.service.UserReactionService;
-import com.itt.newsAggregation.service.UserReadArticleService;
+import com.itt.newsAggregation.repository.ArticleRepository;
+import com.itt.newsAggregation.repository.SavedArticleRepository;
+import com.itt.newsAggregation.repository.UserReadArticleRepository;
+import com.itt.newsAggregation.repository.UserRepository;
+import com.itt.newsAggregation.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +55,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private CategoryKeywordCacheService keywordCacheService;
 
+    @Autowired
+    private ReportedArticleService reportedArticleService;
+
     @Override
     public void saveArticles(List<ArticleDto> articles) {
 
@@ -92,6 +94,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return articles.stream()
+                .filter(article -> !article.getCategory().isHidden() && !article.isHidden())
                 .map(article -> NewsHeadlineResponseDto.builder()
                         .id(article.getId())
                         .title(article.getTitle())
@@ -101,7 +104,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<NewsHeadlineResponseDto> getAllHeadlines() {
-        return articleRepository.findAll().stream().map(article -> NewsHeadlineResponseDto.builder()
+        return articleRepository.findAll().stream()
+                .map(article -> NewsHeadlineResponseDto.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .build()).collect(Collectors.toList());
@@ -126,6 +130,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<Article> articles = articleRepository.findByPublishedAtBetween(startDateTime, endDateTime);
 
         return articles.stream()
+                .filter(article -> !article.getCategory().isHidden() && !article.isHidden() )
                 .map(mapToArticleDto)
                 .collect(Collectors.toList());
     }
@@ -205,6 +210,43 @@ public class ArticleServiceImpl implements ArticleService {
                 .map(mapToArticleDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String updateArticleHiddenStatus(Integer articleId, boolean hidden) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + articleId));
+
+        articleRepository.updateArticleHiddenStatus(articleId, hidden);
+
+        boolean updatedHiddenStatus = articleRepository.findById(articleId)
+                .map(Article::isHidden)
+                .orElse(false);
+
+        if (updatedHiddenStatus == hidden) {
+            return "Successfully updated the hidden status.";
+        } else {
+            throw new RuntimeException("Failed to update the hidden status.");
+        }
+    }
+
+    @Override
+    public String toggleArticlesByKeyword(String keyword, boolean hidden) {
+        List<Article> matchingArticles = articleRepository
+                .findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword);
+
+        if (matchingArticles.isEmpty()) {
+            return "No articles found with the given keyword.";
+        }
+
+        for (Article article : matchingArticles) {
+            article.setHidden(hidden);
+        }
+
+        articleRepository.saveAll(matchingArticles);
+
+        return "Updated hidden status for " + matchingArticles.size() + " article(s).";
+    }
+
 
     private String assignCategory(ArticleDto dto) {
         String text = (dto.getTitle() + " " + dto.getContent()).toLowerCase();

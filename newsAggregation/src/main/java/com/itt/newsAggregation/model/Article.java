@@ -32,6 +32,9 @@
         @JoinColumn(name = "category_id")
         private Category category;
 
+        @Builder.Default
+        private boolean isHidden = false;
+
         private LocalDateTime publishedAt;
 
         @Column(name = "created_at", nullable = false, updatable = false)

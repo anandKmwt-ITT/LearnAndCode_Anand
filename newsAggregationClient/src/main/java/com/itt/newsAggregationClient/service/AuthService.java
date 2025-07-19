@@ -6,6 +6,7 @@ import com.itt.newsAggregationClient.models.AuthRequest;
 import com.itt.newsAggregationClient.models.AuthResponse;
 import com.itt.newsAggregationClient.models.User;
 
+import java.io.Console;
 import java.net.URI;
 import java.net.http.*;
 import java.util.Scanner;
@@ -23,8 +24,8 @@ public class AuthService {
         String username = scanner.nextLine();
         System.out.print("Email: ");
         String email = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+
+        String password = readPassword(scanner, "Password: ");
 
         User user = new User(username, email, password);
 
@@ -36,8 +37,10 @@ public class AuthService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == Created){
+            if (response.statusCode() == Created) {
                 System.out.println("Registration successful!!!\n");
+            } else {
+                System.out.println("Registration failed. Status: " + response.statusCode());
             }
         } catch (Exception e) {
             System.out.println("Registration failed: " + e.getMessage());
@@ -48,8 +51,8 @@ public class AuthService {
         System.out.println("=== User Login ===");
         System.out.print("Username: ");
         String username = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+
+        String password = readPassword(scanner, "Password: ");
 
         AuthRequest authRequest = new AuthRequest(username, password);
 
@@ -72,7 +75,20 @@ public class AuthService {
         } catch (Exception e) {
             System.out.println("Login error: " + e.getMessage());
         }
+
         return null;
     }
+
+    private String readPassword(Scanner scanner, String prompt) {
+        Console console = System.console();
+        if (console != null) {
+            char[] passwordChars = console.readPassword(prompt);
+            return new String(passwordChars);
+        } else {
+            System.out.print(prompt + " (input will be visible): ");
+            return scanner.nextLine();
+        }
+    }
+
 
 }

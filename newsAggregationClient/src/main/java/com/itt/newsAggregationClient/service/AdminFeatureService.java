@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itt.newsAggregationClient.models.ApiClientDto;
 import com.itt.newsAggregationClient.models.CategoryDto;
 import com.itt.newsAggregationClient.models.CategoryKeywordDto;
+import com.itt.newsAggregationClient.models.NewsHeadlineResponseDto;
 
 import java.net.URI;
 import java.net.http.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -177,7 +180,7 @@ public class AdminFeatureService {
                 List<CategoryDto> categories = mapper.readValue(response.body(), new TypeReference<>() {});
                 System.out.println("📋 Available Categories:");
                 for (CategoryDto category : categories) {
-                    System.out.printf("ID: %d | Name: %s%n", category.id, category.name);
+                    System.out.printf("ID: %d | Name: %s | Hidden: %s%n", category.id, category.name, category.hidden);
                 }
             } else {
                 System.out.println("❌ Failed to fetch categories. Status: " + response.statusCode());
@@ -186,4 +189,126 @@ public class AdminFeatureService {
             System.out.println("❗ Error fetching categories: " + e.getMessage());
         }
     }
+
+    public void toggleCategoryVisibility( Scanner scanner, String token) {
+        try {
+            viewAllCategories(token);
+
+            System.out.print("Enter Category ID to toggle hidden status: ");
+            int categoryId = Integer.parseInt(scanner.nextLine());
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_HIDE_CATEGORY + categoryId))
+                    .header("Authorization", "Bearer " + token)
+                    .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == OK) {
+                System.out.println("✅ Category visibility toggled successfully.");
+                System.out.println("Response: " + response.body());
+            } else {
+                System.out.println("❌ Failed to toggle category visibility. Status: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.out.println("❗ Error while toggling category visibility: " + e.getMessage());
+        }
+    }
+
+    public void toggleArticleVisibilityByKeyword(Scanner scanner, String token) {
+        try {
+
+            System.out.print("Do you want to hide(true) or unhide(false) articles? (true/false): ");
+            boolean hidden = Boolean.parseBoolean(scanner.nextLine());
+
+            System.out.print("Enter keyword to hide or unhide articles: ");
+            String keyword = scanner.nextLine();
+
+            String url = API_HIDE_ARTICLES_BY_KEYWORD + "?keyword=" + keyword
+                    + "&hidden=" + hidden;
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + token)
+                    .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == OK) {
+                System.out.println("✅ Articles visibility updated based on keyword.");
+                System.out.println("Response: " + response.body());
+            } else {
+                System.out.println("❌ Failed to update article visibility. Status: " + response.statusCode());
+                System.out.println("Response: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("❗ Error while toggling article visibility: " + e.getMessage());
+        }
+    }
+
+    public void toggleArticleVisibilityById(Scanner scanner, String token) {
+        try {
+            List<NewsHeadlineResponseDto> headlines = fetchAllHeadlines(token);
+            System.out.println("\n=================Articles=================\n");
+            if(!headlines.isEmpty()){
+                for (int i = 0; i < headlines.size(); i++) {
+                    System.out.printf("%d. %s%n", i + 1, headlines.get(i).title);
+                }
+            }
+
+            System.out.print("\nEnter Article ID to update visibility: ");
+            int articleId = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Do you want to hide the article? (true/false): ");
+            boolean hidden = Boolean.parseBoolean(scanner.nextLine());
+
+            String url = API_HIDE_ARTICLE + articleId + "/visibility?hidden=" + hidden;
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + token)
+                    .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == OK) {
+                System.out.println("✅ Article visibility updated successfully.");
+                System.out.println("Response: " + response.body());
+            } else {
+                System.out.println("❌ Failed to update article visibility. Status: " + response.statusCode());
+                System.out.println("Response: " + response.body());
+            }
+        } catch (Exception e) {
+            System.out.println("❗ Error while updating article visibility: " + e.getMessage());
+        }
+    }
+
+    private List<NewsHeadlineResponseDto> fetchAllHeadlines(String token) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_GET_HEADLINES))
+                    .header("Authorization", "Bearer " + token)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return Arrays.asList(objectMapper.readValue(response.body(), NewsHeadlineResponseDto[].class));
+            } else {
+                System.out.println("⚠️ Failed to fetch headlines. Status: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.out.println("❗ Error fetching headlines: " + e.getMessage());
+        }
+        return Collections.emptyList();
+    }
+
+
+
+
 }

@@ -18,4 +18,6 @@ public interface ArticleService {
     List<ArticleDto> getArticlesByDateRange(String startDate, String endDate);
     List<ArticleDto> getLikedArticles(Integer userId);
     List<ArticleDto> getViewedArticles(Integer userId);
+    String updateArticleHiddenStatus(Integer articleId, boolean hidden);
+    String toggleArticlesByKeyword(String keyword, boolean hidden);
 }

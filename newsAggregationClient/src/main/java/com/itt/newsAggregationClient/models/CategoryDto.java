@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class CategoryDto {
     public Integer id;
     public String name;
+    public Boolean hidden;
 
     public CategoryDto() {}
 

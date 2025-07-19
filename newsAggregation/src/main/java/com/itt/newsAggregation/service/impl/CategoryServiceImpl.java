@@ -67,9 +67,22 @@ public class CategoryServiceImpl implements CategoryService {
         return mapToCategoryDto.apply(fetchedCategory.get());
     }
 
+    @Override
+    public CategoryResponseDto toggleCategoryHiddenStatus(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + categoryId));
+
+        category.setHidden(!category.isHidden());
+        Category updated = categoryRepository.save(category);
+
+        return mapToCategoryDto.apply(updated);
+    }
+
+
     private Function<Category, CategoryResponseDto> mapToCategoryDto = category -> CategoryResponseDto.builder()
             .id(category.getId())
             .name(category.getName())
+            .hidden(category.isHidden())
             .build();
 
     private Function<CategoryRequestDto, Category> mapToCategory = categoryDto -> Category.builder()

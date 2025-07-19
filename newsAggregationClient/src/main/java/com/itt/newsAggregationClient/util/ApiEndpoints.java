@@ -11,6 +11,7 @@ public class ApiEndpoints {
     public static final String API_ARTICLES_VIEWED = "http://localhost:8080/api/articles/viewed/";
     public static final String API_ARTICLES_QUERY = "http://localhost:8080/api/articles?";
     public static final String API_CATEGORIES = "http://localhost:8080/api/categories";
+    public static final String API_REPORT = "http://localhost:8080/api/reported-articles";
     public static final String API_CATEGORIES_NAME = "http://localhost:8080/api/categories/name/";
     public static final String API_KEYWORDS = "http://localhost:8080/api/keywords";
     public static final String API_KEYWORDS_USER = "http://localhost:8080/api/keywords/user/";
@@ -22,4 +23,9 @@ public class ApiEndpoints {
     public static final String API_ADMIN_CLIENTS = "http://localhost:8080/api/clients";
     public static final String API_ADMIN_CATEGORIES = "http://localhost:8080/api/categories";
     public static final String API_ADMIN_CATEGORY_KEYWORDS = "http://localhost:8080/api/category-keywords";
+    public static final String API_HIDE_CATEGORY = "http://localhost:8080/api/categories/toggle-hidden/";
+    public static final String API_HIDE_ARTICLE = "http://localhost:8080/api/articles/hide-article/";
+    public static final String API_HIDE_ARTICLES_BY_KEYWORD = "http://localhost:8080/api/articles/toggle-articles-visibility";
+    public static final String API_GET_HEADLINES = "http://localhost:8080/api/articles/headlines";
+
 }

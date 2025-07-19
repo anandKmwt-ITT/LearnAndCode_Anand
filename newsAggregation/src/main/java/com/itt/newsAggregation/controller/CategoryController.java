@@ -19,10 +19,17 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto categoryDto) {
         CategoryResponseDto created = categoryService.createCategory(categoryDto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/toggle-hidden/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<CategoryResponseDto> toggleCategoryHidden(@PathVariable Integer id) {
+        CategoryResponseDto updated = categoryService.toggleCategoryHiddenStatus(id);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

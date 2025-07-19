@@ -14,4 +14,5 @@ public interface CategoryService {
     CategoryResponseDto getCategoryDetailsByName(String name);
     List<CategoryResponseDto> getAllCategories();
     boolean existsByName(String name);
+    CategoryResponseDto toggleCategoryHiddenStatus(Integer categoryId);
 }

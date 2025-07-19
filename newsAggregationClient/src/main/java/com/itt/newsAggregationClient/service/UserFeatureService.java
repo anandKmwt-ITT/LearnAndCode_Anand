@@ -617,14 +617,16 @@ public class UserFeatureService {
                 while (true) {
                     System.out.println("1. Save Article");
                     System.out.println("2. React to Article");
-                    System.out.println("3. Back");
+                    System.out.println("3. Report this Article");
+                    System.out.println("4. Back");
                     System.out.print("Choose an option: ");
                     String choice = scanner.nextLine();
 
                     switch (choice) {
-                        case "1" -> saveArticle(token, userId, articleId); // assumes userId is passed or stored
+                        case "1" -> saveArticle(token, userId, articleId);
                         case "2" -> reactToArticle(token, userId, articleId);
-                        case "3" -> {
+                        case "3" -> reportArticle(token, userId, articleId);
+                        case "4" -> {
                             return;
                         }
                         default -> System.out.println("❌ Invalid choice.");
@@ -710,6 +712,35 @@ public class UserFeatureService {
             }
         }
     }
+
+    private void reportArticle(String token, int userId, int articleId) {
+
+        try {
+            Map<String, Object> reportBody = Map.of(
+                    "userId", userId,
+                    "articleId", articleId
+            );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(ApiEndpoints.API_REPORT))
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(reportBody)))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == Created || response.statusCode() == OK) {
+                System.out.println("✅ Article has reported successfully!.");
+            } else {
+                System.out.println("❌ Failed to submit report. Status: " + response.statusCode());
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠️ Error reporting article: " + e.getMessage());
+        }
+    }
+
 
     private void saveArticle(String token, int userId, int articleId) {
         try {

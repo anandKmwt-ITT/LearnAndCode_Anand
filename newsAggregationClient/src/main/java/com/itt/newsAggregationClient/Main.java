@@ -65,8 +65,11 @@ public class Main {
             System.out.println("2. View external server details");
             System.out.println("3. Update/Edit external server");
             System.out.println("4. Add new news category");
-            System.out.println("5. Add keyword to category"); // NEW OPTION
-            System.out.println("6. Logout");
+            System.out.println("5. Add keyword to category");
+            System.out.println("6. Toggle Category visibility");
+            System.out.println("7. Toggle Article visibility based on KEYWORD");
+            System.out.println("8. Toggle Article visibility");
+            System.out.println("9. Logout");
             System.out.print("Select option: ");
             String choice = scanner.nextLine();
 
@@ -75,8 +78,11 @@ public class Main {
                 case "2" -> adminService.viewClientDetails(scanner, token);
                 case "3" -> adminService.updateClient(scanner, token);
                 case "4" -> adminService.registerNewCategory(scanner, token);
-                case "5" -> adminService.addKeywordToCategory(scanner, token); // NEW ACTION
-                case "6" -> {
+                case "5" -> adminService.addKeywordToCategory(scanner, token);
+                case "6" -> adminService.toggleCategoryVisibility(scanner, token);
+                case "7" -> adminService.toggleArticleVisibilityByKeyword(scanner, token);
+                case "8" -> adminService.toggleArticleVisibilityById(scanner, token);
+                case "9" -> {
                     System.out.println("Logged out.");
                     return;
                 }
