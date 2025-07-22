@@ -12,6 +12,7 @@ import com.itt.newsAggregation.repository.SavedArticleRepository;
 import com.itt.newsAggregation.repository.UserReadArticleRepository;
 import com.itt.newsAggregation.repository.UserRepository;
 import com.itt.newsAggregation.service.*;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -212,21 +213,19 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public String updateArticleHiddenStatus(Integer articleId, boolean hidden) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + articleId));
 
-        articleRepository.updateArticleHiddenStatus(articleId, hidden);
-
-        boolean updatedHiddenStatus = articleRepository.findById(articleId)
-                .map(Article::isHidden)
-                .orElse(false);
-
-        if (updatedHiddenStatus == hidden) {
-            return "Successfully updated the hidden status.";
-        } else {
-            throw new RuntimeException("Failed to update the hidden status.");
+        if (article.isHidden() == hidden) {
+            return "Hidden status is already " + (hidden ? "hidden" : "visible") + ".";
         }
+
+        article.setHidden(hidden);
+        articleRepository.save(article);
+
+        return "Successfully updated the hidden status to " + (hidden ? "hidden" : "visible") + ".";
     }
 
     @Override
